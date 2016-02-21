@@ -1,10 +1,15 @@
 package com.example.dhammond1.tabfragmenttest;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.SystemClock;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +19,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Chronometer;
 
-//PID algorithm from http://www.ee.ucl.ac.uk/~mflanaga/java/index.html
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+//PID algorithm from http://www.ee.ucl.ac.uk/~mflanaga/java/index.html
+//import flanagan.control.PropIntDeriv;
 /**
  * Created by dhammond1 on 2/14/2016.
  */
@@ -31,7 +40,7 @@ public class FragmentMain extends Fragment {
     private EditText ed_FanEditBox;
     private static TextView tv_PitText;
     private static TextView tv_MeatText;
-
+    DatabaseHandler dbHandler;
 
 
 
@@ -71,6 +80,21 @@ public class FragmentMain extends Fragment {
         i.putExtra("temps", new String[]{"1000","2000"});
         getActivity().startService(i);
 
+        ScheduledExecutorService databaseReadTask = Executors.newScheduledThreadPool(5);
+
+        databaseReadTask.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                DatabaseHandler DBHandler = dbHandler.getInstance(getContext());
+                TemperatureEntry entry = DBHandler.getLastEntry();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("entry", entry);
+                Message message = new Message();
+                message.setData(bundle);
+                runnableCallback.sendMessage(message);
+
+            }
+        }, 10000, 10000, TimeUnit.MILLISECONDS);
 
         btn_setPit.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -127,6 +151,25 @@ public class FragmentMain extends Fragment {
 
     }
 
+    private static Handler runnableCallback = new Handler()
+    {
+        public void handleMessage(Message msg)
+        {
+            Bundle bundle = msg.getData();
+            TemperatureEntry entry = (TemperatureEntry)bundle.getSerializable("entry");
+            tv_PitText.setText(entry.getPitTemp());
 
+            tv_MeatText.setText(entry.getMeatTemp());
+        }
+    };
+
+    /*private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            TemperatureEntry entry = (TemperatureEntry)intent.getSerializableExtra("results");
+            Log.d("entry meat from intent", entry.getMeatTemp());
+            Log.d("entry pit from intext", entry.getPitTemp());
+        }
+    };*/
 
 }

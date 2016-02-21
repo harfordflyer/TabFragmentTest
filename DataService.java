@@ -8,19 +8,32 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.provider.ContactsContract;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
+
+import java.io.Serializable;
 import java.lang.Runnable;
 import android.os.SystemClock;
 
 import java.util.Calendar;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 
 /**
  * Created by dhammond1 on 2/12/2016.
  */
-public class DataService extends Service {
+public class DataService extends Service implements Serializable {
 
+
+    //private ReadTempTimerTask readTempTimerTask = new ReadTempTimerTask();
+    Timer myTimer;
+    Context ctx;
     private final IBinder mBinder = new MyBinder();
     public TemperatureEntry sampleEntry = new TemperatureEntry(null, null, null, null);
     DatabaseHandler dbHandler;
@@ -29,7 +42,7 @@ public class DataService extends Service {
     @Override
     public void onCreate()
     {
-
+        ctx = this.getApplicationContext();
         Log.d("on create", "service created");
     }
 
@@ -44,18 +57,40 @@ public class DataService extends Service {
         Log.d("on start started", "service started?");
         Log.d("intents: ", temps[0]);
         Log.d("intents: ", temps[1]);
-        Runnable r = new Runnable() {
+        //put a timer here
+       //readTempTimerTask.cancel();
+       // readTempTimerTask = new ReadTempTimerTask();
+       // myTimer = new Timer();
+       // myTimer.schedule(readTempTimerTask, 5000, 3000);
+        ScheduledExecutorService getCurrentTemps = Executors.newScheduledThreadPool(5);
+
+        getCurrentTemps.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 DatabaseHandler DBHandler = dbHandler.getInstance(getApplicationContext());
                 boolean exists = DBHandler.DoesDatabaseExist(getApplicationContext(),"temperatureEntry.db");
                 Log.d("DBHandler: ", Boolean.toString(exists));
                 ReadTemperatures(sampleEntry, DBHandler);
-            }
-        };
+               /* Log.d("creating intent", "Intent for broadcast");
+                Intent intent = new Intent(getBaseContext(), FragmentMain.class);
+                intent.putExtra("results", sampleEntry);
 
-        Thread t = new Thread(r);
-        t.start();
+                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);*/
+            }
+        },5000, 5000, TimeUnit.MILLISECONDS);
+
+       // Runnable r = new Runnable() {
+       //     @Override
+       //     public void run() {
+       //         DatabaseHandler DBHandler = dbHandler.getInstance(getApplicationContext());
+       //         boolean exists = DBHandler.DoesDatabaseExist(getApplicationContext(),"temperatureEntry.db");
+       //         Log.d("DBHandler: ", Boolean.toString(exists));
+       //         ReadTemperatures(sampleEntry, DBHandler);
+       //     }
+       // };
+
+       // Thread t = new Thread(r);
+       // t.start();
         //android.os.Debug.waitForDebugger();
         //ReadTemperatures(sampleEntry);
         // MainActivity.dbHandler.addEntry(sampleEntry);
@@ -80,11 +115,11 @@ public class DataService extends Service {
         return sampleEntry;
     }
 
+
     private void ReadTemperatures(TemperatureEntry sample, DatabaseHandler db)
     {
         Random rand = new Random();
-        for(int i = 0; i < 10; i++)
-        {
+
             //SystemClock.sleep(2000);
             int pit = rand.nextInt(240) + 20;
             rand = new Random();
@@ -97,7 +132,16 @@ public class DataService extends Service {
             Log.d("time: ", DatabaseHandler.GetDateTime.GetTime(c));
             db.addEntry(new TemperatureEntry(DatabaseHandler.GetDateTime.GetDate(c),
                     DatabaseHandler.GetDateTime.GetTime(c), sample.getPitTemp(), sample.getMeatTemp()));
-        }
+
 
     }
+
+    //static class ReadTempTimerTask extends TimerTask{
+
+      //  public void run(){
+
+     //   }
+   // }
 }
+
+

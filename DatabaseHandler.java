@@ -131,6 +131,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         }*/
 
+    public TemperatureEntry getLastEntry()
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_ENTRIES, null);
+        cursor.moveToLast();
+        TemperatureEntry entry = new TemperatureEntry();
+        entry.setID(Integer.parseInt(cursor.getString(0)));
+        entry.setDate(cursor.getString(1));
+        entry.setTime(cursor.getString(2));
+        entry.setPitTemp(cursor.getString(3));
+        entry.setMeatTemp(cursor.getString(4));
+        return entry;
+    }
+
     public List<TemperatureEntry> getEntriesByDate(String date)
     {
         List<TemperatureEntry> listEntry = new ArrayList<TemperatureEntry>();

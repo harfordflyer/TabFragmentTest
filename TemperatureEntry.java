@@ -1,9 +1,11 @@
 package com.example.dhammond1.tabfragmenttest;
 
+import java.io.Serializable;
+
 /**
  * Created by dhammond1 on 2/21/2016.
  */
-public final class TemperatureEntry {
+public final class TemperatureEntry implements Serializable {
     //private vars
     int _id;
     //Calendar.getTime()
