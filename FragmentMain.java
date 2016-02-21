@@ -1,6 +1,7 @@
 package com.example.dhammond1.tabfragmenttest;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Chronometer;
 
+//PID algorithm from http://www.ee.ucl.ac.uk/~mflanaga/java/index.html
 
 /**
  * Created by dhammond1 on 2/14/2016.
@@ -64,6 +66,10 @@ public class FragmentMain extends Fragment {
         btnStart = (Button) thisView.findViewById(R.id.chronStart);
         btnStop = (Button) thisView.findViewById(R.id.chronStop);
         chrono = (Chronometer)thisView.findViewById(R.id.chronometer);
+
+        Intent i = new Intent(getActivity(), DataService.class);
+        i.putExtra("temps", new String[]{"1000","2000"});
+        getActivity().startService(i);
 
 
         btn_setPit.setOnClickListener(new View.OnClickListener(){
