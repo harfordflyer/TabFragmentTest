@@ -29,12 +29,23 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // Contacts table name
     public static final String TABLE_ENTRIES = "entries";
 
+    public static final String TABLE_CONFIG = "config";
+
     // Contacts Table Columns names
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_DATE = "date";
     public static final String COLUMN_TIME = "time";
     public static final String COLUMN_PIT_TEMP = "pitTemp";
     public static final String COLUMN_MEAT_TEMP = "meatTemp";
+
+    public static final String CONFIG_ID = "id";
+    public static final String CONFIG_DATE = "date";
+    public static final String CONFIG_PIT_TEMP = "config_pit";
+    public static final String CONFIG_FAN_SPEED = "config_fan";
+    public static final String CONFIG_MIN_TEMP = "config_min_temp";
+    public static final String CONFIG_KP = "config_kp";
+    public static final String CONFIG_KI = "config_ki";
+    public static final String CONFIG_KD = "config_kd";
 
 
     public DatabaseHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
@@ -51,9 +62,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return instance;
     }
 
-    public String DeleteTable()
+    public String DeleteEntriesTable()
     {
         return "DROP TABLE IF EXISTS " + TABLE_ENTRIES;
+    }
+
+    public String DeleteConfigTable()
+    {
+        return "DROP TABLE IF EXISTS" + TABLE_CONFIG;
     }
 
     public String CreateTableString()
@@ -63,6 +79,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + COLUMN_TIME + " TEXT,"
                 + COLUMN_PIT_TEMP + " TEXT,"
                 + COLUMN_MEAT_TEMP + " TEXT" + ")";
+        return SQL_CREATE_ENTRIES;
+    }
+
+    public String CreateConfigTableString()
+    {
+        final String SQL_CREATE_ENTRIES = "CREATE TABLE " + TABLE_CONFIG + "("
+                + CONFIG_ID + " INTEGER PRIMARY KEY,"
+                + CONFIG_DATE + " TEXT,"
+                + CONFIG_PIT_TEMP  + " TEXT,"
+                + CONFIG_MIN_TEMP  + " TEXT,"
+                + CONFIG_FAN_SPEED  + " TEXT,"
+                + CONFIG_KP  + " TEXT,"
+                + CONFIG_KI   + " TEXT,"
+                + CONFIG_KD   + " TEXT" + ")";
         return SQL_CREATE_ENTRIES;
     }
 
@@ -78,7 +108,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         //start with a clean db for now
         if(DoesDatabaseExist(_context, TABLE_ENTRIES))
         {
-            db.execSQL(DeleteTable());
+            db.execSQL(DeleteEntriesTable());
+        }
+
+        if(DoesDatabaseExist(_context, TABLE_CONFIG))
+        {
+            db.execSQL(DeleteConfigTable());
         }
 
         db.execSQL(CreateTableString());
@@ -88,7 +123,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop older table if existed
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ENTRIES);
+        db.execSQL(DeleteEntriesTable());
+        db.execSQL(DeleteConfigTable());
 
         // Create tables again
         onCreate(db);
@@ -114,6 +150,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void addConfigEntry(ConfigEntry entry)
+    {
+        SQLiteDatabase db = null;
+        try {
+            db = this.getWritableDatabase();
+        }
+        catch(Exception e){
+            Log.d("database error", e.getMessage());
+        }
+        ContentValues value = new ContentValues();
+        value.put(CONFIG_DATE, entry.getDate());
+        value.put(CONFIG_PIT_TEMP, entry.getPit());
+        value.put(CONFIG_FAN_SPEED, entry.getFan());
+        value.put(CONFIG_MIN_TEMP, entry.getMin());
+        value.put(CONFIG_KP, entry.getKP());
+        value.put(CONFIG_KI, entry.getKI());
+        value.put(CONFIG_KD, entry.getKD());
+
+        db.insert(TABLE_CONFIG, null, value);
+    }
        /* public TemperatureEntry getEntry(int id)
         {
             SQLiteDatabase db = this.getReadableDatabase();
@@ -142,6 +198,23 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         entry.setTime(cursor.getString(2));
         entry.setPitTemp(cursor.getString(3));
         entry.setMeatTemp(cursor.getString(4));
+        return entry;
+    }
+
+    public ConfigEntry getLastConfigEntry()
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_CONFIG, null);
+        cursor.moveToLast();
+        ConfigEntry entry = new ConfigEntry();
+        entry.setID(Integer.parseInt(cursor.getString(0)));
+        entry.setDate(cursor.getString(1));
+        entry.setPit(cursor.getString(2));
+        entry.setMin(cursor.getString(3));
+        entry.setFan(cursor.getString(4));
+        entry.setKP(cursor.getString(5));
+        entry.setKI(cursor.getString(6));
+        entry.setKD(cursor.getString(7));
         return entry;
     }
 
@@ -178,6 +251,41 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cursor.close();
         // return contact list
         return listEntry;
+    }
+
+    public ConfigEntry GetConfigEntryByDate(String date)
+    {
+        List<ConfigEntry> listEntry = new ArrayList<ConfigEntry>();
+        String selectQuery = "SELECT  * FROM " + TABLE_ENTRIES  + " WHERE " + COLUMN_DATE + " = \"" + date + "\"";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        //Cursor cursor = db.rawQuery(selectQuery, new String[]{date});
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery(selectQuery, null);
+        }
+        catch(Exception ex)
+        {
+            Log.d("GetEntriesError", ex.getMessage());
+        }
+        if(cursor.moveToFirst())
+        {
+            do{
+                ConfigEntry entry = new ConfigEntry();
+                entry.setID(Integer.parseInt(cursor.getString(0)));
+                entry.setDate(cursor.getString(1));
+                entry.setPit(cursor.getString(2));
+                entry.setMin(cursor.getString(3));
+                entry.setFan(cursor.getString(4));
+                entry.setKP(cursor.getString(5));
+                entry.setKI(cursor.getString(6));
+                entry.setKD(cursor.getString(7));
+
+            }while(cursor.moveToNext());
+        }
+        //get the last entry if there are multiple entries
+        ConfigEntry c = listEntry.get(listEntry.size() - 1);
+        return c;
     }
 
     public final static class GetDateTime
