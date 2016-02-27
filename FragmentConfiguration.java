@@ -37,9 +37,9 @@ public class FragmentConfiguration extends Fragment{
         ed_currentKi = (EditText)thisView.findViewById(R.id.ed_Ki);
         ed_currentKd = (EditText)thisView.findViewById(R.id.ed_Kd);
         chk_config = (CheckBox)thisView.findViewById(R.id.ckbx_SaveConfig);
-        btn_Kp = (Button)thisView.findViewById(R.id.btn_setKp);
-        btn_Ki = (Button)thisView.findViewById(R.id.btn_setKi);
-        btn_Kd = (Button)thisView.findViewById(R.id.btn_setKd);
+        //btn_Kp = (Button)thisView.findViewById(R.id.btn_setKp);
+        //btn_Ki = (Button)thisView.findViewById(R.id.btn_setKi);
+        //btn_Kd = (Button)thisView.findViewById(R.id.btn_setKd);
 
         return thisView;
     }

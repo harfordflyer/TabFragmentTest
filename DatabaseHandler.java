@@ -40,12 +40,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public static final String CONFIG_ID = "id";
     public static final String CONFIG_DATE = "date";
-    public static final String CONFIG_PIT_TEMP = "config_pit";
-    public static final String CONFIG_FAN_SPEED = "config_fan";
+    public static final String CONFIG_TARGET_TEMP = "config_target_temp";
     public static final String CONFIG_MIN_TEMP = "config_min_temp";
+    public static final String CONFIG_MAX_TEMP = "config_max_temp";
+    public static final String CONFIG_FAN_SPEED = "config_fan";
+
     public static final String CONFIG_KP = "config_kp";
     public static final String CONFIG_KI = "config_ki";
     public static final String CONFIG_KD = "config_kd";
+    public static final String CONFIG_SAMPLE_TIME = "config_sample_Time";
 
 
     public DatabaseHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
@@ -87,12 +90,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         final String SQL_CREATE_ENTRIES = "CREATE TABLE " + TABLE_CONFIG + "("
                 + CONFIG_ID + " INTEGER PRIMARY KEY,"
                 + CONFIG_DATE + " TEXT,"
-                + CONFIG_PIT_TEMP  + " TEXT,"
+                + CONFIG_TARGET_TEMP  + " TEXT,"
                 + CONFIG_MIN_TEMP  + " TEXT,"
+                + CONFIG_MAX_TEMP  + " TEXT,"
                 + CONFIG_FAN_SPEED  + " TEXT,"
                 + CONFIG_KP  + " TEXT,"
                 + CONFIG_KI   + " TEXT,"
-                + CONFIG_KD   + " TEXT" + ")";
+                + CONFIG_KD   + " TEXT,"
+                + CONFIG_SAMPLE_TIME   + " TEXT" + ")";
         return SQL_CREATE_ENTRIES;
     }
 
@@ -161,12 +166,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         ContentValues value = new ContentValues();
         value.put(CONFIG_DATE, entry.getDate());
-        value.put(CONFIG_PIT_TEMP, entry.getPit());
+        value.put(CONFIG_TARGET_TEMP, entry.getTartetPitTemp());
+        value.put(CONFIG_MIN_TEMP, entry.getMinPitTemp());
+        value.put(CONFIG_MAX_TEMP, entry.getMaxPitTemp());
         value.put(CONFIG_FAN_SPEED, entry.getFan());
-        value.put(CONFIG_MIN_TEMP, entry.getMin());
+
         value.put(CONFIG_KP, entry.getKP());
         value.put(CONFIG_KI, entry.getKI());
         value.put(CONFIG_KD, entry.getKD());
+        value.put(CONFIG_SAMPLE_TIME, entry.getSampleTime());
 
         db.insert(TABLE_CONFIG, null, value);
     }
@@ -209,12 +217,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         ConfigEntry entry = new ConfigEntry();
         entry.setID(Integer.parseInt(cursor.getString(0)));
         entry.setDate(cursor.getString(1));
-        entry.setPit(cursor.getString(2));
-        entry.setMin(cursor.getString(3));
-        entry.setFan(cursor.getString(4));
-        entry.setKP(cursor.getString(5));
-        entry.setKI(cursor.getString(6));
-        entry.setKD(cursor.getString(7));
+        entry.setTargetPitTemp(cursor.getString(2));
+        entry.setMinPitTemp(cursor.getString(3));
+        entry.setMaxPitTemp(cursor.getString(4));
+        entry.setFan(cursor.getString(5));
+        entry.setKP(cursor.getString(6));
+        entry.setKI(cursor.getString(7));
+        entry.setKD(cursor.getString(8));
+
+        entry.setSampleTime(cursor.getString(9));
         return entry;
     }
 
@@ -274,12 +285,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 ConfigEntry entry = new ConfigEntry();
                 entry.setID(Integer.parseInt(cursor.getString(0)));
                 entry.setDate(cursor.getString(1));
-                entry.setPit(cursor.getString(2));
-                entry.setMin(cursor.getString(3));
-                entry.setFan(cursor.getString(4));
-                entry.setKP(cursor.getString(5));
-                entry.setKI(cursor.getString(6));
-                entry.setKD(cursor.getString(7));
+                entry.setTargetPitTemp(cursor.getString(2));
+                entry.setMinPitTemp(cursor.getString(3));
+                entry.setMaxPitTemp(cursor.getString(4));
+                entry.setFan(cursor.getString(5));
+                entry.setKP(cursor.getString(6));
+                entry.setKI(cursor.getString(7));
+                entry.setKD(cursor.getString(8));
 
             }while(cursor.moveToNext());
         }

@@ -7,37 +7,42 @@ public class ConfigEntry {
 
     int _id;
     String _configDate;
-    String _configPit;
+    String _configTargetPit;
+    String _configMinPit;
+    String _configMaxPit;
     String _configFan;
-    String _configMin;
     String _configKp;
     String _configKi;
     String _configKd;
+    String _configSampleTime;
 
     public ConfigEntry()
     {}
 
-    public ConfigEntry(String date, String pit, String fan, String min, String kp, String ki, String kd)
+    public ConfigEntry(String date, String targetPit, String minPit, String maxPit, String fan, String min, String kp, String ki, String kd, String sample)
     {
         _configDate = date;
-        _configPit = pit;
+        _configTargetPit = targetPit;
+        _configMinPit = minPit;
+        _configMaxPit = maxPit;
         _configFan = fan;
-        _configMin = min;
         _configKp = kp;
         _configKi = ki;
         _configKd = kd;
+        _configSampleTime = sample;
     }
 
-    public ConfigEntry(int id, String date, String pit, String fan, String min, String kp, String ki, String kd)
+    public ConfigEntry(int id, String date, String targetPit, String minPit, String maxPit, String fan, String min, String kp, String ki, String kd, String sample)
     {
         _id = id;
-        _configDate = date;
-        _configPit = pit;
+        _configTargetPit = targetPit;
+        _configMinPit = minPit;
+        _configMaxPit = maxPit;
         _configFan = fan;
-        _configMin = min;
         _configKp = kp;
         _configKi = ki;
         _configKd = kd;
+        _configSampleTime = sample;
     }
 
     public int getID(){ return this._id; }
@@ -46,15 +51,17 @@ public class ConfigEntry {
     public String getDate(){return this._configDate;}
     public void setDate(String date){this._configDate = date;}
 
-    public String getPit() {return this._configPit;}
-    public void setPit(String pit){this._configPit = pit;}
+    public String getTartetPitTemp(){return this._configTargetPit;}
+    public void setTargetPitTemp(String target){this._configTargetPit = target;}
+
+    public String getMinPitTemp(){return this._configMinPit;}
+    public void setMinPitTemp(String minTemp){this._configMinPit = minTemp;}
+
+    public String getMaxPitTemp(){return this._configMaxPit;}
+    public void setMaxPitTemp(String maxTemp){this._configMaxPit = maxTemp;}
 
     public String getFan() {return this._configFan;}
     public void setFan(String fan){this._configFan = fan;}
-
-    public String getMin() {return this._configMin;}
-    public void setMin(String min){this._configMin = min;}
-
 
     public String getKP() {return this._configKp;}
     public void setKP(String kp) {this._configKp = kp;}
@@ -65,5 +72,7 @@ public class ConfigEntry {
     public String getKD() {return this._configKd;}
     public void setKD(String kd) {this._configKd = kd;}
 
+    public String getSampleTime() {return this._configSampleTime;}
+    public void setSampleTime(String sampleTime) {this._configSampleTime = sampleTime; }
 
 }

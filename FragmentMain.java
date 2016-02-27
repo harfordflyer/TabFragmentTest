@@ -58,8 +58,8 @@ public class FragmentMain extends Fragment {
         thisView = inflater.inflate(R.layout.fragment_main, container, false);
 
         ed_PitEditBox = (EditText)thisView.findViewById(R.id.ed_targetPitTemp);
-        ed_MinEditBox = (EditText)thisView.findViewById(R.id.ed_targetMinTemp);
-        ed_FanEditBox = (EditText)thisView.findViewById(R.id.ed_targetFanSpeed);
+       // ed_MinEditBox = (EditText)thisView.findViewById(R.id.ed_targetMinTemp);
+        //ed_FanEditBox = (EditText)thisView.findViewById(R.id.ed_targetFanSpeed);
         tv_PitText = (TextView)thisView.findViewById(R.id.tx_tempPit);
         tv_MeatText = (TextView)thisView.findViewById(R.id.tx_tempMeat);
         tv_PitText.setText("");
@@ -69,8 +69,8 @@ public class FragmentMain extends Fragment {
         Toast.makeText(getActivity(),"fragment main",Toast.LENGTH_LONG).show();
 
         btn_setPit = (Button)thisView.findViewById(R.id.btn_setPit);
-        btn_minFan = (Button)thisView.findViewById(R.id.btn_setFanSpeed);
-        btn_minPit = (Button)thisView.findViewById(R.id.btn_setMinTemp);
+       // btn_minFan = (Button)thisView.findViewById(R.id.btn_setFanSpeed);
+       // btn_minPit = (Button)thisView.findViewById(R.id.btn_setMinTemp);
 
         btnStart = (Button) thisView.findViewById(R.id.chronStart);
         btnStop = (Button) thisView.findViewById(R.id.chronStop);
@@ -104,21 +104,21 @@ public class FragmentMain extends Fragment {
             }
         });
 
-        btn_minPit.setOnClickListener(new View.OnClickListener(){
+       /* btn_minPit.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v)
             {
                 s_targetMinTemp = String.valueOf(ed_MinEditBox.getText());
             }
-        });
+        });*/
 
-        btn_minFan.setOnClickListener(new View.OnClickListener() {
+       /* btn_minFan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
                 s_targetFanSpeed = String.valueOf((ed_FanEditBox.getText()));
             }
-        });
+        });*/
 
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
