@@ -20,6 +20,7 @@ import android.widget.Toast;
 import android.widget.Chronometer;
 
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -41,48 +42,20 @@ public class FragmentMain extends Fragment {
     private static TextView tv_PitText;
     private static TextView tv_MeatText;
     DatabaseHandler dbHandler;
-
-
+    ScheduledExecutorService databaseReadTask;
+    Future<?> scheduleFuture;
 
     Chronometer chrono;
     long mLastStopTime = 0;
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        View thisView;
-        Button btnStart;
-        Button btnStop;
-        Button btn_minPit;
-        Button btn_minFan;
-        Button btn_setPit;
 
-        thisView = inflater.inflate(R.layout.fragment_main, container, false);
+    public void HaltService()
+    {
+        scheduleFuture.cancel(true);
+    }
 
-        ed_PitEditBox = (EditText)thisView.findViewById(R.id.ed_targetPitTemp);
-       // ed_MinEditBox = (EditText)thisView.findViewById(R.id.ed_targetMinTemp);
-        //ed_FanEditBox = (EditText)thisView.findViewById(R.id.ed_targetFanSpeed);
-        tv_PitText = (TextView)thisView.findViewById(R.id.tx_tempPit);
-        tv_MeatText = (TextView)thisView.findViewById(R.id.tx_tempMeat);
-        tv_PitText.setText("");
-        tv_MeatText.setText("");
-
-
-        Toast.makeText(getActivity(),"fragment main",Toast.LENGTH_LONG).show();
-
-        btn_setPit = (Button)thisView.findViewById(R.id.btn_setPit);
-       // btn_minFan = (Button)thisView.findViewById(R.id.btn_setFanSpeed);
-       // btn_minPit = (Button)thisView.findViewById(R.id.btn_setMinTemp);
-
-        btnStart = (Button) thisView.findViewById(R.id.chronStart);
-        btnStop = (Button) thisView.findViewById(R.id.chronStop);
-        chrono = (Chronometer)thisView.findViewById(R.id.chronometer);
-
-        Intent i = new Intent(getActivity(), DataService.class);
-        i.putExtra("temps", new String[]{"1000","2000"});
-        getActivity().startService(i);
-
-        ScheduledExecutorService databaseReadTask = Executors.newScheduledThreadPool(5);
-
-        databaseReadTask.scheduleAtFixedRate(new Runnable() {
+    public void StartService()
+    {
+        scheduleFuture = databaseReadTask.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 DatabaseHandler DBHandler = dbHandler.getInstance(getContext());
@@ -95,6 +68,57 @@ public class FragmentMain extends Fragment {
 
             }
         }, 10000, 10000, TimeUnit.MILLISECONDS);
+
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+        View thisView;
+        Button btnStart;
+        Button btnStop;
+        Button btn_minPit;
+        Button btn_minFan;
+        Button btn_setPit;
+
+        thisView = inflater.inflate(R.layout.fragment_main, container, false);
+
+        ed_PitEditBox = (EditText)thisView.findViewById(R.id.ed_targetPitTemp);
+        tv_PitText = (TextView)thisView.findViewById(R.id.tx_tempPit);
+        tv_MeatText = (TextView)thisView.findViewById(R.id.tx_tempMeat);
+        tv_PitText.setText("");
+        tv_MeatText.setText("");
+
+
+        Toast.makeText(getActivity(),"fragment main",Toast.LENGTH_LONG).show();
+
+        btn_setPit = (Button)thisView.findViewById(R.id.btn_setPit);
+
+        btnStart = (Button) thisView.findViewById(R.id.chronStart);
+        btnStop = (Button) thisView.findViewById(R.id.chronStop);
+        chrono = (Chronometer)thisView.findViewById(R.id.chronometer);
+
+        Intent i = new Intent(getActivity(), DataService.class);
+        i.putExtra("temps", new String[]{"1000","2000"});
+        getActivity().startService(i);
+
+        databaseReadTask = Executors.newScheduledThreadPool(5);
+
+        StartService();
+
+       /* scheduleFuture = databaseReadTask.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                DatabaseHandler DBHandler = dbHandler.getInstance(getContext());
+                TemperatureEntry entry = DBHandler.getLastEntry();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("entry", entry);
+                Message message = new Message();
+                message.setData(bundle);
+                runnableCallback.sendMessage(message);
+
+            }
+        }, 10000, 10000, TimeUnit.MILLISECONDS);*/
 
         btn_setPit.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -148,6 +172,11 @@ public class FragmentMain extends Fragment {
 
 
         return thisView;
+
+    }
+
+    public void StopService()
+    {
 
     }
 

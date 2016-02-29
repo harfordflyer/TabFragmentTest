@@ -19,7 +19,7 @@ public class ConfigEntry {
     public ConfigEntry()
     {}
 
-    public ConfigEntry(String date, String targetPit, String minPit, String maxPit, String fan, String min, String kp, String ki, String kd, String sample)
+    public ConfigEntry(String date, String targetPit, String minPit, String maxPit, String fan, String kp, String ki, String kd, String sample)
     {
         _configDate = date;
         _configTargetPit = targetPit;
@@ -32,7 +32,7 @@ public class ConfigEntry {
         _configSampleTime = sample;
     }
 
-    public ConfigEntry(int id, String date, String targetPit, String minPit, String maxPit, String fan, String min, String kp, String ki, String kd, String sample)
+    public ConfigEntry(int id, String date, String targetPit, String minPit, String maxPit, String fan, String kp, String ki, String kd, String sample)
     {
         _id = id;
         _configTargetPit = targetPit;

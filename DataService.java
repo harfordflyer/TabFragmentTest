@@ -58,10 +58,6 @@ public class DataService extends Service implements Serializable {
         Log.d("intents: ", temps[0]);
         Log.d("intents: ", temps[1]);
         //put a timer here
-       //readTempTimerTask.cancel();
-       // readTempTimerTask = new ReadTempTimerTask();
-       // myTimer = new Timer();
-       // myTimer.schedule(readTempTimerTask, 5000, 3000);
         ScheduledExecutorService getCurrentTemps = Executors.newScheduledThreadPool(5);
 
         getCurrentTemps.scheduleAtFixedRate(new Runnable() {

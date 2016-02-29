@@ -122,6 +122,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
 
         db.execSQL(CreateTableString());
+        db.execSQL(CreateConfigTableString());
 
     }
 
@@ -176,7 +177,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         value.put(CONFIG_KD, entry.getKD());
         value.put(CONFIG_SAMPLE_TIME, entry.getSampleTime());
 
-        db.insert(TABLE_CONFIG, null, value);
+        try {
+            db.insert(TABLE_CONFIG, null, value);
+        }
+        catch (Exception ex){
+            Log.d("Save config", ex.getMessage());
+        }
     }
        /* public TemperatureEntry getEntry(int id)
         {
