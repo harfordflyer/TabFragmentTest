@@ -1,5 +1,7 @@
 package com.example.dhammond1.tabfragmenttest;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -8,8 +10,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.util.Calendar;
+import java.util.Set;
 
 /**
  * Created by dhammond1 on 2/14/2016.
@@ -36,7 +40,7 @@ public class FragmentConfiguration extends Fragment implements View.OnClickListe
     private EditText ed_fanSpeed;
     private EditText ed_sampleTime;
 
-
+    private static final String CONFIG_NAME = "AppConfig";
     DatabaseHandler dbHandler;
 
 
@@ -66,8 +70,7 @@ public class FragmentConfiguration extends Fragment implements View.OnClickListe
         ed_sampleTime = (EditText)thisView.findViewById(R.id.ed_SampleTime);
         Button  btn_saveConfig = (Button)thisView.findViewById(R.id.btn_saveConfig);
         btn_saveConfig.setOnClickListener(this);
-
-
+        RestoreConfigurations();
 
         // btn_saveConfig.setOnClickListener(new View.OnClickListener(){
 
@@ -104,7 +107,7 @@ public class FragmentConfiguration extends Fragment implements View.OnClickListe
     @Override
     public void onClick(View v) {
 
-        String target = String.valueOf(ed_targetPit.getText());
+       /* String target = String.valueOf(ed_targetPit.getText());
         String min =  String.valueOf(ed_minTemp.getText());
         String max = String.valueOf(ed_maxTemp.getText());
         String fan = String.valueOf(ed_fanSpeed.getText());
@@ -120,6 +123,63 @@ public class FragmentConfiguration extends Fragment implements View.OnClickListe
         FragmentMain main = (FragmentMain)getFragmentManager().findFragmentById(R.id.fragMain);
         main.HaltService();
         DBHandler.addConfigEntry(entry);
-        main.StartService();
+        main.StartService();*/
+        SaveConfigurations();
+    }
+
+    public void RestoreConfigurations()
+    {
+        SharedPreferences config = getContext().getSharedPreferences(CONFIG_NAME, Context.MODE_PRIVATE);
+        String restoredText = config.getString("targetPit",null);
+        SetTextBox(ed_targetPit, restoredText, "250");
+
+        restoredText = config.getString("minTemp", null);
+        SetTextBox(ed_minTemp, restoredText, "230");
+
+        restoredText = config.getString("maxTemp", null);
+        SetTextBox(ed_maxTemp, restoredText, "260");
+
+        restoredText = config.getString("fanSpeed",null);
+        SetTextBox(ed_fanSpeed, restoredText, "100");
+
+        restoredText = config.getString("kp", null);
+        SetTextBox(ed_currentKp, restoredText, "5");
+
+        restoredText = config.getString("ki", null);
+        SetTextBox(ed_currentKi, restoredText, "1");
+
+        restoredText = config.getString("kd", null);
+        SetTextBox(ed_currentKd, restoredText, "1");
+
+        restoredText = config.getString("sampleTime", null);
+        SetTextBox(ed_sampleTime, restoredText, "30");
+
+
+    }
+
+    public void SetTextBox(TextView view, String text, String defaultText)
+    {
+        if(text == null)
+        {
+            view.setText(defaultText, TextView.BufferType.EDITABLE);
+        }
+        else
+        {
+            view.setText(text, TextView.BufferType.EDITABLE);
+        }
+    }
+
+    public void SaveConfigurations()
+    {
+        SharedPreferences.Editor editor = getContext().getSharedPreferences(CONFIG_NAME,Context.MODE_PRIVATE).edit();
+        editor.putString("targetPit", ed_targetPit.getText().toString());
+        editor.putString("minTemp", ed_minTemp.getText().toString());
+        editor.putString("maxTemp", ed_maxTemp.getText().toString());
+        editor.putString("fanSpeed", ed_fanSpeed.getText().toString());
+        editor.putString("kp", ed_currentKp.getText().toString());
+        editor.putString("ki", ed_currentKi.getText().toString());
+        editor.putString("kd", ed_currentKd.getText().toString());
+        editor.putString("sampleTime", ed_sampleTime.getText().toString());
+        editor.apply();
     }
 }

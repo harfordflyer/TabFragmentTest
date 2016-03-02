@@ -1,7 +1,9 @@
 package com.example.dhammond1.tabfragmenttest;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -37,6 +39,13 @@ public class MainActivity extends AppCompatActivity {
                 viewPager.setCurrentItem(tab.getPosition());
 
                 Toast.makeText(MainActivity.this, tab.getText() + " selected", Toast.LENGTH_LONG).show();
+
+                
+
+                if(tab.getText() == "Main")
+                {
+                    //get the context of the tab and set the updated preference of the target temp
+                }
             }
 
             @Override

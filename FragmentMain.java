@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -41,9 +42,11 @@ public class FragmentMain extends Fragment {
     private EditText ed_FanEditBox;
     private static TextView tv_PitText;
     private static TextView tv_MeatText;
+    private static TextView tv_targetTemp;
     DatabaseHandler dbHandler;
     ScheduledExecutorService databaseReadTask;
     Future<?> scheduleFuture;
+    private static final String CONFIG_NAME = "AppConfig";
 
     Chronometer chrono;
     long mLastStopTime = 0;
@@ -77,34 +80,43 @@ public class FragmentMain extends Fragment {
         View thisView;
         Button btnStart;
         Button btnStop;
-        Button btn_minPit;
-        Button btn_minFan;
-        Button btn_setPit;
+
 
         thisView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        ed_PitEditBox = (EditText)thisView.findViewById(R.id.ed_targetPitTemp);
+        tv_targetTemp = (TextView)thisView.findViewById(R.id.txt_targetTemp);
         tv_PitText = (TextView)thisView.findViewById(R.id.tx_tempPit);
         tv_MeatText = (TextView)thisView.findViewById(R.id.tx_tempMeat);
         tv_PitText.setText("");
         tv_MeatText.setText("");
 
-
-        Toast.makeText(getActivity(),"fragment main",Toast.LENGTH_LONG).show();
-
-        btn_setPit = (Button)thisView.findViewById(R.id.btn_setPit);
-
         btnStart = (Button) thisView.findViewById(R.id.chronStart);
         btnStop = (Button) thisView.findViewById(R.id.chronStop);
         chrono = (Chronometer)thisView.findViewById(R.id.chronometer);
+        Toast.makeText(getActivity(),"fragment main",Toast.LENGTH_LONG).show();
 
-        Intent i = new Intent(getActivity(), DataService.class);
+        SharedPreferences prefs = getContext().getSharedPreferences(CONFIG_NAME, Context.MODE_PRIVATE);
+        String restoredText = prefs.getString("targetPit", null);
+        if(restoredText == null)
+        {
+            tv_targetTemp.setText("250", TextView.BufferType.EDITABLE);
+        }
+        else
+        {
+            tv_targetTemp.setText(restoredText, TextView.BufferType.EDITABLE);
+        }
+
+        //btn_setPit = (Button)thisView.findViewById(R.id.btn_setPit);
+
+
+
+        /*Intent i = new Intent(getActivity(), DataService.class);
         i.putExtra("temps", new String[]{"1000","2000"});
         getActivity().startService(i);
 
         databaseReadTask = Executors.newScheduledThreadPool(5);
 
-        StartService();
+        StartService();*/
 
        /* scheduleFuture = databaseReadTask.scheduleAtFixedRate(new Runnable() {
             @Override
@@ -120,43 +132,35 @@ public class FragmentMain extends Fragment {
             }
         }, 10000, 10000, TimeUnit.MILLISECONDS);*/
 
-        btn_setPit.setOnClickListener(new View.OnClickListener(){
+
+        //need to set the target temp from the preferences
+       /* btn_setPit.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
 
                 s_targetPitTemp = String.valueOf(ed_PitEditBox.getText());
             }
-        });
-
-       /* btn_minPit.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v)
-            {
-                s_targetMinTemp = String.valueOf(ed_MinEditBox.getText());
-            }
         });*/
 
-       /* btn_minFan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                s_targetFanSpeed = String.valueOf((ed_FanEditBox.getText()));
-            }
-        });*/
+
 
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mLastStopTime == 0)
-                {
+                if (mLastStopTime == 0) {
                     chrono.setBase(SystemClock.elapsedRealtime());
-                }
-                else
-                {
+                } else {
                     long intervalOnPause = (SystemClock.elapsedRealtime() - mLastStopTime);
                     chrono.setBase(chrono.getBase() + intervalOnPause);
                 }
                 chrono.start();
+                //start sampling data
+                Intent i = new Intent(getActivity(), DataService.class);
+                i.putExtra("temps", new String[]{"1000", "2000"});
+                getActivity().startService(i);
+
+                databaseReadTask = Executors.newScheduledThreadPool(5);
+                StartService();
             }
         });
 
