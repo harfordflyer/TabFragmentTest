@@ -20,28 +20,20 @@ import java.util.Set;
  */
 public class FragmentConfiguration extends Fragment implements View.OnClickListener{
 
-    private String s_currentKp;
-    private String s_currentKi;
-    private String s_currentKd;
-    private String s_targetPit;
-    private String s_minTemp;
-    private String s_maxTemp;
-    private String s_fan;
-    private String s_sampleTime;
     public String s_date;
 
     private EditText ed_currentKp;
     private EditText ed_currentKi;
     private EditText ed_currentKd;
 
-    private EditText ed_targetPit;
+    //private EditText ed_targetPit;
     private EditText ed_minTemp;
     private EditText ed_maxTemp;
     private EditText ed_fanSpeed;
     private EditText ed_sampleTime;
 
     private static final String CONFIG_NAME = "AppConfig";
-    DatabaseHandler dbHandler;
+
 
 
     @Override
@@ -60,7 +52,7 @@ public class FragmentConfiguration extends Fragment implements View.OnClickListe
 
 
         thisView = inflater.inflate(R.layout.fragment_configuration, container, false);
-        ed_targetPit = (EditText)thisView.findViewById(R.id.ed_targetPit);
+
         ed_minTemp = (EditText)thisView.findViewById(R.id.ed_minPit);
         ed_maxTemp = (EditText)thisView.findViewById(R.id.ed_maxPit);
         ed_fanSpeed = (EditText)thisView.findViewById(R.id.ed_fanSpeed);
@@ -72,34 +64,7 @@ public class FragmentConfiguration extends Fragment implements View.OnClickListe
         btn_saveConfig.setOnClickListener(this);
         RestoreConfigurations();
 
-        // btn_saveConfig.setOnClickListener(new View.OnClickListener(){
 
-
-
-           /* @Override
-            public void onClick(View v){
-                String target = String.valueOf(ed_targetPit.getText());
-                String min = ed_minTemp.getText().toString();
-                String max = ed_maxTemp.getText().toString();
-                String fan = ed_fan.getText().toString();
-                String kp = ed_currentKp.getText().toString();
-                String ki = ed_currentKi.getText().toString();
-                String kd = ed_currentKp.getText().toString();
-                String samaple = ed_sampleTime.getText().toString();
-
-
-                ConfigEntry entry = new ConfigEntry(date, ed_targetPit.getText().toString(),
-                        ed_minTemp.getText().toString(),
-                        ed_maxTemp.getText().toString(),
-                        ed_fan.getText().toString(),
-                        ed_currentKp.getText().toString(),
-                        ed_currentKi.getText().toString(),
-                        ed_currentKd.getText().toString(),
-                        ed_sampleTime.getText().toString());
-
-                dbHandler.addConfigEntry(entry);
-            }*/
-        //});
 
         return thisView;
     }
@@ -107,33 +72,15 @@ public class FragmentConfiguration extends Fragment implements View.OnClickListe
     @Override
     public void onClick(View v) {
 
-       /* String target = String.valueOf(ed_targetPit.getText());
-        String min =  String.valueOf(ed_minTemp.getText());
-        String max = String.valueOf(ed_maxTemp.getText());
-        String fan = String.valueOf(ed_fanSpeed.getText());
-        String kp = String.valueOf(ed_currentKp.getText());
-        String ki = String.valueOf(ed_currentKi.getText());
-        String kd = String.valueOf(ed_currentKp.getText());
-        String sample = String.valueOf(ed_sampleTime.getText());
 
-
-
-        ConfigEntry entry = new ConfigEntry(s_date, target, min, max, fan, kp, ki, kd, sample);
-        DatabaseHandler DBHandler = dbHandler.getInstance(getActivity().getApplicationContext());
-        FragmentMain main = (FragmentMain)getFragmentManager().findFragmentById(R.id.fragMain);
-        main.HaltService();
-        DBHandler.addConfigEntry(entry);
-        main.StartService();*/
         SaveConfigurations();
     }
 
     public void RestoreConfigurations()
     {
         SharedPreferences config = getContext().getSharedPreferences(CONFIG_NAME, Context.MODE_PRIVATE);
-        String restoredText = config.getString("targetPit",null);
-        SetTextBox(ed_targetPit, restoredText, "250");
 
-        restoredText = config.getString("minTemp", null);
+        String restoredText = config.getString("minTemp", null);
         SetTextBox(ed_minTemp, restoredText, "230");
 
         restoredText = config.getString("maxTemp", null);
@@ -172,7 +119,7 @@ public class FragmentConfiguration extends Fragment implements View.OnClickListe
     public void SaveConfigurations()
     {
         SharedPreferences.Editor editor = getContext().getSharedPreferences(CONFIG_NAME,Context.MODE_PRIVATE).edit();
-        editor.putString("targetPit", ed_targetPit.getText().toString());
+        //editor.putString("targetPit", ed_targetPit.getText().toString());
         editor.putString("minTemp", ed_minTemp.getText().toString());
         editor.putString("maxTemp", ed_maxTemp.getText().toString());
         editor.putString("fanSpeed", ed_fanSpeed.getText().toString());

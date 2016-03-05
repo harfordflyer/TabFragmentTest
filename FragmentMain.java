@@ -31,18 +31,10 @@ import java.util.concurrent.TimeUnit;
  * Created by dhammond1 on 2/14/2016.
  */
 public class FragmentMain extends Fragment {
-    private String s_currentPitTemp;
-    private String s_currentMeatTemp;
-    private String s_targetPitTemp;
 
-    private String s_targetMinTemp;
-    private String s_targetFanSpeed;
-    private EditText ed_PitEditBox;
-    private EditText ed_MinEditBox;
-    private EditText ed_FanEditBox;
     private static TextView tv_PitText;
     private static TextView tv_MeatText;
-    private static TextView tv_targetTemp;
+    private static EditText ed_targetTemp;
     DatabaseHandler dbHandler;
     ScheduledExecutorService databaseReadTask;
     Future<?> scheduleFuture;
@@ -80,11 +72,11 @@ public class FragmentMain extends Fragment {
         View thisView;
         Button btnStart;
         Button btnStop;
-
+        Button btnSet;
 
         thisView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        tv_targetTemp = (TextView)thisView.findViewById(R.id.txt_targetTemp);
+        ed_targetTemp = (EditText)thisView.findViewById(R.id.ed_targetPit);
         tv_PitText = (TextView)thisView.findViewById(R.id.tx_tempPit);
         tv_MeatText = (TextView)thisView.findViewById(R.id.tx_tempMeat);
         tv_PitText.setText("");
@@ -92,22 +84,20 @@ public class FragmentMain extends Fragment {
 
         btnStart = (Button) thisView.findViewById(R.id.chronStart);
         btnStop = (Button) thisView.findViewById(R.id.chronStop);
+        btnSet = (Button) thisView.findViewById(R.id.btn_setPit);
         chrono = (Chronometer)thisView.findViewById(R.id.chronometer);
         Toast.makeText(getActivity(),"fragment main",Toast.LENGTH_LONG).show();
 
         SharedPreferences prefs = getContext().getSharedPreferences(CONFIG_NAME, Context.MODE_PRIVATE);
-        String restoredText = prefs.getString("targetPit", null);
+        String restoredText = prefs.getString("targetPitTemp", null);
         if(restoredText == null)
         {
-            tv_targetTemp.setText("250", TextView.BufferType.EDITABLE);
+            ed_targetTemp.setText("250", TextView.BufferType.EDITABLE);
         }
         else
         {
-            tv_targetTemp.setText(restoredText, TextView.BufferType.EDITABLE);
+            ed_targetTemp.setText(restoredText, TextView.BufferType.EDITABLE);
         }
-
-        //btn_setPit = (Button)thisView.findViewById(R.id.btn_setPit);
-
 
 
         /*Intent i = new Intent(getActivity(), DataService.class);
@@ -174,6 +164,16 @@ public class FragmentMain extends Fragment {
             }
         });
 
+
+        btnSet.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                SharedPreferences.Editor editor = getContext().getSharedPreferences(CONFIG_NAME,Context.MODE_PRIVATE).edit();
+                String s = ed_targetTemp.getText().toString();
+                editor.putString("targetPitTemp", ed_targetTemp.getText().toString());
+                editor.apply();
+            }
+        });
 
         return thisView;
 

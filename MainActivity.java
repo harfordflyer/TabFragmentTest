@@ -40,12 +40,6 @@ public class MainActivity extends AppCompatActivity {
 
                 Toast.makeText(MainActivity.this, tab.getText() + " selected", Toast.LENGTH_LONG).show();
 
-                
-
-                if(tab.getText() == "Main")
-                {
-                    //get the context of the tab and set the updated preference of the target temp
-                }
             }
 
             @Override
