@@ -1,6 +1,11 @@
 package com.example.dhammond1.tabfragmenttest;
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,33 +49,44 @@ public class FragmentGraph extends Fragment{
         List<TemperatureEntry> entries = dbHandler.getEntriesByDate(date);
 
         double count = 0.0;
-        LineGraphSeries<DataPoint> series;
+        LineGraphSeries<DataPoint> pitSeries = new LineGraphSeries<DataPoint>();
+        LineGraphSeries<DataPoint> meatSeries = new LineGraphSeries<DataPoint>();
+        int meatCol = ContextCompat.getColor(getContext(),R.color.colorAccent);
 
+        int cccP = pitSeries.getColor();
+        int cccM = meatSeries.getColor();
 
-        ArrayList<DataPoint> dataList = new ArrayList<DataPoint>();
+        meatSeries.setColor(Color.MAGENTA);
+        pitSeries.setColor(Color.GREEN);
+        cccM = meatSeries.getColor();
+        cccP = pitSeries.getColor();
+
+        Paint paint = new Paint();
+        paint.setColor(Color.GREEN);
+        pitSeries.setCustomPaint(paint);
+
+        ArrayList<DataPoint> pitDataList = new ArrayList<DataPoint>();
+        ArrayList<DataPoint> meatDataList = new ArrayList<DataPoint>();
         for(TemperatureEntry e : entries)
         {
-            e.getPitTemp();
-            DataPoint p = new DataPoint(count, Double.parseDouble(e.getPitTemp()));
-            dataList.add(p);
+            //e.getPitTemp();
+            DataPoint pit = new DataPoint(count, Double.parseDouble(e.getPitTemp()));
+            DataPoint meat = new DataPoint(count, Double.parseDouble(e.getMeatTemp()));
+            pitDataList.add(pit);
+            meatDataList.add(meat);
             count++;
         }
 
-        DataPoint[] dataPoints = new DataPoint[dataList.size()];
-        dataPoints = dataList.toArray(dataPoints);
+        DataPoint[] pitDataPoints = new DataPoint[pitDataList.size()];
+        DataPoint[] meatDataPoints = new DataPoint[meatDataList.size()];
 
-        series = new LineGraphSeries<DataPoint>(dataPoints);
+        meatDataPoints = meatDataList.toArray(meatDataPoints);
+        meatSeries = new LineGraphSeries<DataPoint>(meatDataPoints);
+        graph.addSeries(meatSeries);
 
-
-      /*  LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[]{
-                new DataPoint(0,1),
-                new DataPoint(1,1),
-                new DataPoint(4,5),
-                new DataPoint(5,6),
-                new DataPoint(8,10),
-                new DataPoint(4,3),
-        });*/
-        graph.addSeries(series);
+        pitDataPoints  = pitDataList.toArray(pitDataPoints);
+        pitSeries = new LineGraphSeries<DataPoint>(pitDataPoints);
+        graph.addSeries(pitSeries);
     }
 
 }

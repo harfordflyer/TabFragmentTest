@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -37,7 +38,7 @@ public class DataService extends Service implements Serializable {
     private final IBinder mBinder = new MyBinder();
     public TemperatureEntry sampleEntry = new TemperatureEntry(null, null, null, null);
     DatabaseHandler dbHandler;
-    Calendar c = Calendar.getInstance();
+    public static Calendar c = Calendar.getInstance();
 
     @Override
     public void onCreate()
@@ -67,6 +68,12 @@ public class DataService extends Service implements Serializable {
                 boolean exists = DBHandler.DoesDatabaseExist(getApplicationContext(),"temperatureEntry.db");
                 Log.d("DBHandler: ", Boolean.toString(exists));
                 ReadTemperatures(sampleEntry, DBHandler);
+                TemperatureEntry entry = DBHandler.getLastEntry();
+               /* Bundle bundle = new Bundle();
+                bundle.putSerializable("entry", entry);
+                Message message = new Message();
+                message.setData(bundle);
+                runnableCallback.sendMessage(message);*/
                /* Log.d("creating intent", "Intent for broadcast");
                 Intent intent = new Intent(getBaseContext(), FragmentMain.class);
                 intent.putExtra("results", sampleEntry);
@@ -112,11 +119,10 @@ public class DataService extends Service implements Serializable {
     }
 
 
-    private void ReadTemperatures(TemperatureEntry sample, DatabaseHandler db)
+    public static void ReadTemperatures(TemperatureEntry sample, DatabaseHandler db)
     {
         Random rand = new Random();
 
-            //SystemClock.sleep(2000);
             int pit = rand.nextInt(240) + 20;
             rand = new Random();
             int meat = rand.nextInt(220) + 60;

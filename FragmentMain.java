@@ -54,6 +54,13 @@ public class FragmentMain extends Fragment {
             @Override
             public void run() {
                 DatabaseHandler DBHandler = dbHandler.getInstance(getContext());
+                TemperatureEntry sampleEntry = new TemperatureEntry(null, null, null, null);
+
+                //boolean exists = DBHandler.DoesDatabaseExist(getApplicationContext(),"temperatureEntry.db");
+                //Log.d("DBHandler: ", Boolean.toString(exists));
+                DataService.ReadTemperatures(sampleEntry, DBHandler);
+
+
                 TemperatureEntry entry = DBHandler.getLastEntry();
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("entry", entry);
@@ -79,8 +86,8 @@ public class FragmentMain extends Fragment {
         ed_targetTemp = (EditText)thisView.findViewById(R.id.ed_targetPit);
         tv_PitText = (TextView)thisView.findViewById(R.id.tx_tempPit);
         tv_MeatText = (TextView)thisView.findViewById(R.id.tx_tempMeat);
-        tv_PitText.setText("");
-        tv_MeatText.setText("");
+        tv_PitText.setText("200");
+        tv_MeatText.setText("200");
 
         btnStart = (Button) thisView.findViewById(R.id.chronStart);
         btnStop = (Button) thisView.findViewById(R.id.chronStop);
@@ -147,7 +154,7 @@ public class FragmentMain extends Fragment {
                 //start sampling data
                 Intent i = new Intent(getActivity(), DataService.class);
                 i.putExtra("temps", new String[]{"1000", "2000"});
-                getActivity().startService(i);
+                //getActivity().startService(i);
 
                 databaseReadTask = Executors.newScheduledThreadPool(5);
                 StartService();
