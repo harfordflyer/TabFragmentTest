@@ -69,7 +69,7 @@ public class FragmentGraph extends Fragment{
         ArrayList<DataPoint> meatDataList = new ArrayList<DataPoint>();
         for(TemperatureEntry e : entries)
         {
-            //e.getPitTemp();
+
             DataPoint pit = new DataPoint(count, Double.parseDouble(e.getPitTemp()));
             DataPoint meat = new DataPoint(count, Double.parseDouble(e.getMeatTemp()));
             pitDataList.add(pit);

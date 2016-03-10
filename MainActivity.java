@@ -1,8 +1,11 @@
 package com.example.dhammond1.tabfragmenttest;
 
+import android.app.Fragment;
+
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.design.widget.Snackbar;
@@ -15,6 +18,9 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+
+    public String someData;
+    public Fragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,19 +43,38 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab){
                 viewPager.setCurrentItem(tab.getPosition());
+                int pos = tab.getPosition();
+                switch (pos)
+                {
+                    case 0:
+                        break;
+                    case 1:
+
+                        break;
+                    case 2:
+                        break;
+                }
 
                 Toast.makeText(MainActivity.this, tab.getText() + " selected", Toast.LENGTH_LONG).show();
+                //FragmentMain fragment1
+                //FragmentConfiguration fragment2
+                //FragmentGraph fragment3
+
+
 
             }
 
+            
             @Override
             public void onTabUnselected(TabLayout.Tab tab){
                 Toast.makeText(MainActivity.this, tab.getText() + " un selected", Toast.LENGTH_LONG).show();
+                fragment = getFragmentManager().findFragmentById(R.id.fragMain);
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab){
                 Toast.makeText(MainActivity.this, tab.getText() + " re selected", Toast.LENGTH_LONG).show();
+                fragment = getFragmentManager().findFragmentById(R.id.fragMain);
             }
 
         });
